@@ -1,16 +1,11 @@
-## Review
+## 정리
 
-_Congratulations, you've completed this exercise and learned a lot about (replace-me: feature/product that was taught in this exercise)
+CodeQL 의 순서는 항상 같습니다.
 
-<img src="https://octodex.github.com/images/jetpacktocat.png" alt="celebrate" width=200 align=right>
+1. 소스를 **데이터베이스**로 만든다
+2. **QL 쿼리**로 그 데이터베이스를 조회한다
+3. 결과를 **SARIF** 로 내보낸다
+4. GitHub 이 SARIF 를 읽어 **알림**으로 보여준다
 
-Here's a recap of your accomplishments:
-
-- (replace-me: Accomplishment #1)
-- (replace-me: Accomplishment #N)
-
-### What's next?
-
-- (replace-me: Natural follow up Skills exercise - if there is one)
-- (replace-me: Documentation link to learn more about the feature)
-- (replace-me: Other resources or calls to action)
+기본 설정은 1~4 를 한 번에 해줍니다. 고급 설정은 각 단계를 열어줍니다.
+커스텀 쿼리, 언어 매트릭스, 커스텀 빌드는 전부 고급 설정에서만 됩니다.
