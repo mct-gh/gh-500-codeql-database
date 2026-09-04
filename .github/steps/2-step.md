@@ -1,36 +1,43 @@
-## Step 2: (replace-me: STEP-NAME)
+## 2단계 · 쿼리를 직접 쓴다
 
-(replace-me: OPTIONAL Brief story or scenario to introduce the step)
+데이터베이스가 생겼으니 조회할 차례입니다.
 
-### 📖 Theory: (replace-me: Theory title)
+### 할 일
 
-<!-- GitHub-styled notifications can be used outside of ordered lists. Available options are: NOTE, IMPORTANT, WARNING, TIP, CAUTION -->
-<!--
-> [!NOTE]
-> (Important note or additional information relevant to this section)
- -->
+파일 두 개를 만드세요.
 
-(replace-me: Optional theory or background information relevant to this step)
+`queries/qlpack.yml`
 
-(replace-me: OPTIONAL Reference images from the `.github/images/` directory to support any part of the content)
+```yaml
+name: contoso/security-queries
+version: 0.0.1
+dependencies:
+  codeql/javascript-all: "*"
+```
 
-<img width="200" alt="descriptive alt text" src="../images/inflatocat.png" />
+`queries/hardcoded-key.ql`
 
+```ql
+/**
+ * @name Hardcoded configuration key
+ * @description 소스에 직접 박아 넣은 설정 키를 찾는다.
+ * @kind problem
+ * @problem.severity warning
+ * @id contoso/hardcoded-key
+ */
 
-### ⌨️ Activity: (replace-me: Activity title)
+import javascript
 
-1. (replace-me: First instruction)
+from VariableDeclarator v
+where v.getBindingPattern().toString().matches("%KEY%")
+select v, "설정 키로 보이는 변수가 소스에 직접 들어 있습니다."
+```
 
-    (replace-me: Make sure to properly indent any multiline instructions)
+### 왜 이렇게 하나
 
-1. (replace-me: Second instruction)
+`qlpack.yml` 이 없으면 쿼리가 어떤 라이브러리를 쓰는지 알 수 없어 컴파일에 실패합니다.
+쿼리 하나만 덜렁 두면 안 되는 이유입니다.
 
-1. (replace-me: Additional instructions as needed)
-
-<details>
-<summary>Having trouble? 🤷</summary><br/>
-
-- (replace-me: Troubleshooting tip or hint)
-- (replace-me: Additional troubleshooting tips as needed)
-
-</details>
+주석 블록의 `@id` 와 `@kind` 는 장식이 아닙니다.
+`@kind problem` 이어야 결과가 코드 스캐닝 알림으로 올라갑니다.
+`@id` 는 알림을 구분하는 열쇠라 중복되면 알림이 덮어써집니다.
