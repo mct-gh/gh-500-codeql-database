@@ -1,35 +1,40 @@
-## Step 3: (replace-me: STEP-NAME)
+## 3단계 · 커스텀 쿼리를 스캔에 연결한다
 
-(replace-me: OPTIONAL Brief story or scenario to introduce the step)
+쿼리를 썼으니 실제 스캔이 그것을 쓰게 만들어야 합니다.
 
-### 📖 Theory: (replace-me: Theory title)
+### 할 일
 
-<!-- GitHub-styled notifications can be used outside of ordered lists. Available options are: NOTE, IMPORTANT, WARNING, TIP, CAUTION -->
-<!--
-> [!NOTE]
-> (Important note or additional information relevant to this section)
- -->
+`.github/workflows/codeql.yml` 을 만들고 `queries` 옵션으로 우리 쿼리 폴더를 가리키세요.
 
-(replace-me: Optional theory or background information relevant to this step)
+```yaml
+name: CodeQL
 
-### ⌨️ Activity: (replace-me: Activity title)
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
 
-1. (replace-me: First instruction)
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v5
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: javascript-typescript
+          queries: security-extended,./queries
+      - uses: github/codeql-action/analyze@v3
+```
 
-   (replace-me: Make sure to properly indent any multiline instructions)
+### 왜 이렇게 하나
 
-1. (replace-me: Second instruction)
+`queries` 는 쉼표로 여러 개를 겹쳐 쓸 수 있습니다.
+`security-extended` 는 GitHub 이 만든 확장 쿼리 묶음이고, `./queries` 는 우리가 쓴 것입니다.
 
-   (replace-me: Optionally reference images from the `.github/images/` directory to support any part of the content)
-
-   <img width="200" alt="descriptive alt text" src="../images/jetpacktocat.png" />
-
-1. (replace-me: Additional instructions as needed)
-
-<details>
-<summary>Having trouble? 🤷</summary><br/>
-
-- (replace-me: Troubleshooting tip or hint)
-- (replace-me: Additional troubleshooting tips as needed)
-
-</details>
+여기서 자주 하는 실수 하나. **기본 설정(default setup)을 켠 채로 이 워크플로를 추가하면 충돌합니다.**
+같은 저장소에서 둘 다 돌면 알림이 중복되거나 하나가 무시됩니다.
+커스텀 쿼리를 쓰려면 고급 설정(advanced setup)으로 전환해야 합니다.
