@@ -1,46 +1,21 @@
-# (replace-me: Exercise title)
+# 랩 B · CodeQL 데이터베이스와 커스텀 쿼리
 
-_(replace-me: One-line description of the exercise)_
+_GH-500 모듈 5 · CodeQL 이 실제로 무엇을 만들고 무엇을 조회하는가_
 
-## Welcome
+## 이 랩에서 하는 일
 
-- **Who is this for**: (replace-me: Target audience description)
-- **What you'll learn**: (replace-me: Learning objectives)
-- **What you'll build**: (replace-me: Description of what the learner will create)
-- **Prerequisites**:
-  - (replace-me: Prerequisite skill/exercise)
-  - (replace-me: Other prerequisites)
+기본 설정(default setup)으로 코드 스캐닝을 켜면 CodeQL 이 알아서 돕니다.
+이 랩은 그 안을 열어봅니다. 데이터베이스를 직접 만들고, 쿼리를 직접 써서 돌립니다.
 
-- **How long**: This exercise takes less than (replace-me: estimated time) to complete.
+시험은 "CodeQL 이 코드를 관계형 데이터베이스로 바꾼 뒤 QL 로 조회한다"는 구조를 묻습니다.
+말로만 외우면 헷갈립니다. 한 번 만들어 보면 안 헷갈립니다.
 
-In this exercise, you will:
+## 소요 시간
 
-1. (replace-me: Learning objective step #1)
-1. (replace-me: Learning objective step #2)
-1. (replace-me: Learning objective step #N)
+약 40분, 4단계
 
+## 시작하는 법
 
-### How to start this exercise
-
-Simply copy the exercise to your account, then give your favorite Octocat (Mona) **about 20 seconds** to prepare the first lesson, then **refresh the page**.
-
-<!--  (replace-me: Make sure to edit the URL with proper template_owner, template_name, repo name and description)  -->
-[![](https://img.shields.io/badge/Copy%20Exercise-%E2%86%92-1f883d?style=for-the-badge&logo=github&labelColor=197935)](https://github.com/new?template_owner=skills&template_name=exercise-template&owner=%40me&name=skills-<replace-me>&description=Exercise:+Replace+me&visibility=public)
-
-<details>
-<summary>Having trouble? 🤷</summary><br/>
-
-When copying the exercise, we recommend the following settings:
-
-- For owner, choose your personal account or an organization to host the repository.
-
-- We recommend creating a public repository, since private repositories will use Actions minutes.
-
-If the exercise isn't ready in 20 seconds, please check the [Actions](../../actions) tab.
-
-- Check to see if a job is running. Sometimes it simply takes a bit longer.
-
-- If the page shows a failed job, please submit an issue. Nice, you found a bug! 🐛
-
-</details>
-
+1. **Use this template → Create a new repository**
+2. 소유자는 본인 계정, 공개 범위는 **Public**
+3. 20초 뒤 새로고침하면 첫 단계가 이슈로 열립니다
