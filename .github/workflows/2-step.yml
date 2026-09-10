@@ -2,47 +2,46 @@ name: Step 2
 
 on:
   workflow_dispatch:
-  # Common event triggers: pull_request, push, issues, issue_comment (feel free to experiment)
-  # Docs: https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows
-  # Example:
-  # pull_request:
-  #   branches:
-  #     - main
-  #   types:
-  #     - closed
+  push:
+    branches:
+      - main
+    paths:
+      - 'queries/**'
 
 permissions:
-  contents: write
+  contents: read
   actions: write
   issues: write
 
+concurrency:
+  group: "2-step"
+  cancel-in-progress: true
+
 env:
   STEP_3_FILE: ".github/steps/3-step.md"
-
 jobs:
   find_exercise:
     name: Find Exercise Issue
-    uses: skills/exercise-toolkit/.github/workflows/find-exercise-issue.yml@v0.9.1
+    uses: skills/exercise-toolkit/.github/workflows/find-exercise-issue.yml@v0.9.3
 
-  # This job is optional. We often call it a "grading job". If the step is not graded, remove it.
   check_step_work:
     name: Check step work
-    runs-on: ubuntu-latest
     needs: [find_exercise]
+    runs-on: ubuntu-latest
     env:
       ISSUE_REPOSITORY: ${{ github.repository }}
       ISSUE_NUMBER: ${{ needs.find_exercise.outputs.issue-number }}
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Get response templates
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: skills/exercise-toolkit
           path: exercise-toolkit
-          ref: v0.9.1
+          ref: v0.9.3
 
       - name: Find last comment
         id: find-last-comment
@@ -50,6 +49,7 @@ jobs:
         with:
           repository: ${{ env.ISSUE_REPOSITORY }}
           issue-number: ${{ env.ISSUE_NUMBER }}
+          comment-author: github-actions[bot]
           direction: last
 
       - name: Update comment - checking work
@@ -61,24 +61,37 @@ jobs:
           file: exercise-toolkit/markdown-templates/step-feedback/checking-work.md
           edit-mode: replace
 
-      # START: Check practical exercise
-
-      # replace-me: Example of a grading check. You can add more checks as needed.
-      - name: Check if README file exists
-        id: check-file-exists
+      - name: "Check file exists - queries/qlpack.yml"
+        id: check-pack
         continue-on-error: true
-        uses: skills/exercise-toolkit/actions/file-exists@v0.9.1
+        uses: skills/exercise-toolkit/actions/file-exists@v0.9.3
         with:
-          file: README.md
+          file: 'queries/qlpack.yml'
 
-      # replace-me: Example of a grading check. You can add more checks as needed.
-      - name: Check for keyphrase in README.md
-        id: check-for-keyphrase
+      - name: "Check file exists - queries/hardcoded-key.ql"
+        id: check-query
         continue-on-error: true
-        uses: skills/action-keyphrase-checker@v1
+        uses: skills/exercise-toolkit/actions/file-exists@v0.9.3
         with:
-          text-file: README.md
-          keyphrase: Installation guide
+          file: 'queries/hardcoded-key.ql'
+
+      - name: "Check keyphrase - kind problem"
+        id: check-kind
+        continue-on-error: true
+        uses: skills/action-keyphrase-checker@v2
+        with:
+          text-file: queries/hardcoded-key.ql
+          keyphrase: "@kind problem"
+          case-sensitive: false
+
+      - name: "Check keyphrase - import javascript"
+        id: check-import
+        continue-on-error: true
+        uses: skills/action-keyphrase-checker@v2
+        with:
+          text-file: queries/hardcoded-key.ql
+          keyphrase: "import javascript"
+          case-sensitive: false
 
       - name: Update comment - step results
         uses: GrantBirki/comment@v2.1.1
@@ -91,14 +104,14 @@ jobs:
           vars: |
             step_number: 2
             results_table:
-              - description: "Checked if README.md file exists"
-                passed: ${{ steps.check-file-exists.outcome == 'success' }}
-              - description: "Checked for Installation guide in README.md"
-                passed: ${{ steps.check-for-keyphrase.outcome == 'success' }}
-
-      # Add more checks as needed
-
-      # END: Check practical exercise
+              - description: "qlpack.yml 로 의존성을 선언했다"
+                passed: ${{ steps.check-pack.outcome == 'success' }}
+              - description: "쿼리 파일을 만들었다"
+                passed: ${{ steps.check-query.outcome == 'success' }}
+              - description: "kind 를 problem 으로 지정했다"
+                passed: ${{ steps.check-kind.outcome == 'success' }}
+              - description: "javascript 라이브러리를 임포트했다"
+                passed: ${{ steps.check-import.outcome == 'success' }}
 
       - name: Fail job if not all checks passed
         if: contains(steps.*.outcome, 'failure')
@@ -106,7 +119,7 @@ jobs:
 
   post_next_step_content:
     name: Post next step content
-    needs: [find_exercise] # if check_step_work then "needs: [find_exercise, check_step_work]"
+    needs: [find_exercise, check_step_work]
     runs-on: ubuntu-latest
     env:
       ISSUE_REPOSITORY: ${{ github.repository }}
@@ -114,14 +127,14 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Get response templates
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: skills/exercise-toolkit
           path: exercise-toolkit
-          ref: v0.9.1
+          ref: v0.9.3
 
       - name: Create comment - step finished
         uses: GrantBirki/comment@v2.1.1
@@ -148,7 +161,7 @@ jobs:
 
       - name: Disable current workflow and enable next one
         run: |
-          gh workflow disable "${{github.workflow}}"
+          gh workflow disable "${{ github.workflow }}"
           gh workflow enable "Step 3"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
